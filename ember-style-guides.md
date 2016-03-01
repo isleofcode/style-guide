@@ -64,15 +64,18 @@ export default Component.extend();
 
 This pattern also serves as a handy tool for developers to know what you actually used in a file;
 
-- Avoid importing properties from other files. For example, a constant on Model A, in most cases, should not be imported to Model B;
+- Avoid importing properties from other files. For example, a constant on Model A should not be imported to Model B in most cases;
 
-- Don't use jquery accessors;
+- Don't use jQuery accessors;
 
-- Animations should leverage hardware accelerated properites. But you probably just want to use Liquid;
+- Animations should leverage hardware accelerated properites. For transitions use Liquid Fire;
 
-- Components probably don’t need to be wrapped in a div, as they by default generate divs. Use the classNames and/or tagName property to modify a component before wrapping it;
+- Components  on’t need to be wrapped in a div, they are divs by default. Use the classNames and/or tagName property to modify a component before wrapping it;
 
-- Nesting components is good, but nest just to nest. Consider if your nesting adds better details or obfuscation for new developers;
+- Don't over nest your components. Consider if your nesting adds better details or obfuscation for new developers;
+
+- For mobile, remember that heavy DOM nesting negatively impacts
+  performance;
 
 - Within Cordova/Phonegap applications, abstract general Cordova to a service;
 
@@ -109,6 +112,9 @@ attrs: {}
 ```
 
 We don’t do much more here. It is ok to sometimes add some code, for example a small computed property to filter an item. Another exception is obviously queryParams.
+
+Sometimes we still use Controllers in mobile where the saved nesting
+noticeably improves performnance.
 
 ##Routes
 

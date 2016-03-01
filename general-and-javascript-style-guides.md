@@ -6,7 +6,7 @@
 
 - Variables names should be camelCased;
 
-- Comments should be useful and not fodder. They should point out different or difficult things, or fyi's. They should not describe the obvious, presumed framework functionality (e.g. //sendaction bubbles action) or generally declare things in the block of code below;
+- Comments should be useful and not fodder. They should point out different or difficult things. They should not consider generally presumed language or framework functionality (e.g. //sendaction bubbles action);
 
 - Always use es6 syntax, e.g. () vs function();
 
@@ -31,7 +31,7 @@ export default Component.extend({
 });
 ```
 
-- Use const for most variable declarations. Use let in cases where you need to re-assign a value. User var almost never;
+- Use const for most variable declarations. Use let in cases where you need to re-assign a value. Use var almost never;
 
 - Forward declare as much as possible. So instead of:
 
