@@ -68,9 +68,9 @@ This pattern also serves as a handy tool for developers to know what you actuall
 
 - Don't use jQuery accessors;
 
-- Animations should leverage hardware accelerated properites. For transitions use Liquid Fire;
+- Animations should leverage hardware accelerated properties. For transitions use Liquid Fire;
 
-- Components  on’t need to be wrapped in a div, they are divs by default. Use the classNames and/or tagName property to modify a component before wrapping it;
+- Components  don’t need to be wrapped in a div, they are divs by default. Use the classNames and/or tagName property to modify a component before wrapping it;
 
 - Don't over nest your components. Consider if your nesting adds better details or obfuscation for new developers;
 
@@ -114,7 +114,7 @@ attrs: {}
 We don’t do much more here. It is ok to sometimes add some code, for example a small computed property to filter an item. Another exception is obviously queryParams.
 
 Sometimes we still use Controllers in mobile where the saved nesting
-noticeably improves performnance.
+noticeably improves performance.
 
 ##Routes
 
