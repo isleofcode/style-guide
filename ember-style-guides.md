@@ -70,7 +70,7 @@ This pattern also serves as a handy tool for developers to know what you actuall
 
 - Animations should leverage hardware accelerated properties. For transitions use Liquid Fire;
 
-- Components  don’t need to be wrapped in a div, they are divs by default. Use the classNames and/or tagName property to modify a component before wrapping it;
+- Components don’t need to be wrapped in a div, they are divs by default. Use the classNames and/or tagName property to modify a component before wrapping it;
 
 - Don't over nest your components. Consider if your nesting adds better details or obfuscation for new developers;
 
