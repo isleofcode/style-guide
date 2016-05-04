@@ -19,8 +19,9 @@ We adhere to a mostly [git-flow](http://nvie.com/posts/a-successful-git-branchin
 branching model.
 
 #### Main branches
-- `master` is master. Code should be cleaned, tested, and release-worthy. Merges
-  to master are restricted to the project lead, and anyone they may nominate;
+- `master` is master. Code should be cleaned, tested, and release-worthy.
+  Permission to merge to master is restricted to the project lead, and anyone
+  they may nominate;
 - `develop` is the group sandbox. Code should be feature-complete and not be
   breaking, but may be gappy.
 
@@ -38,10 +39,11 @@ One branch type stems from `master`:
 When reviewing work, it can be helpful to step through state, both mentally & in
 execution. To achieve this, we:
 - Commit atomically (more on this in the next section);
-- Rebase from upstream branches, e.g. `git rebase develop` with
-  `feat/user-registration` checked out, to keep the HEAD branch's work at the
-  tip; and
-- Merge from downstream branches with PRs on GitHub
+- Rebase from upstream branches, e.g.
+  `git checkout feat/user-registration; git rebase develop`, to keep the HEAD
+  branch's work at the tip; and
+- Merge from downstream branches with PRs on GitHub, e.g.
+  https://github.com/isleofcode/style-guide/pull/2 (how meta!)
 
 
 ## Committing
@@ -74,8 +76,8 @@ Where:
 - `<scope>` should indicate the primary app concept affected by the commit, e.g.
   `user`, `login-page`, `contacts.index`; and
 - `<subject>` starts with an imperative verb and describes the work performed,
-  e.g. "compute user.fullName from firstName and lastName", "add user
-  registration flow", "conform route to es6". Lowercase is preferred, w/no
+  e.g. `compute user.fullName from firstName and lastName`, `add user
+  registration flow`, `conform route to es6`. Lowercase is preferred, w/no
   trailing dot.
 
 Though `<scope>` is technically an optional parameter, please omit it only for
