@@ -66,7 +66,6 @@ Where:
 - `<type>` categorizes the work performed in the commit, and must be one of:
     - feat;
     - fix;
-    - hotfix;
     - refactor;
     - docs;
     - style;
