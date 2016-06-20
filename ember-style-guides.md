@@ -203,7 +203,7 @@ export default Component.extend({
 });
 ```
 
-- Set tag name. Components don’t need to be wrapped in a div, they are divs by default. Use the `tagName` property to modify a component before wrapping it.
+- Set tag name. Components don’t need to be wrapped in a div as they are by default. Use the `tagName` property to modify a component before wrapping it.
 
 ```javascript
 // good
