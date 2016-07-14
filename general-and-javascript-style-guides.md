@@ -39,7 +39,7 @@ export default Component.extend({
 export default Component.extend({
   actions: {
     authenticate() {
-      this.sendAction(‘authenticate’, this.get(‘email’), this.get(‘password’);
+      this.sendAction(‘authenticate’, this.get(‘email’), this.get(‘password’));
     }
   }
 });
