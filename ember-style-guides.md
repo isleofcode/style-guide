@@ -1,269 +1,317 @@
-#Ember Guides
+The Ember Style Guide
+---------------------
 
-Contents:
+This Ember style guide recommends best practices so that real-world Ember programmers can write code that can be maintained by other real-world Ember programmers. A style guide that reflects real-world usage gets used, and a style guide that holds to an ideal that has been rejected by the people it is supposed to help risks not getting used at all – no matter how good it is.
 
-- General
-- Controllers;
-- Routes;
-- Components;
-- Order of Declaration;
+The guide is separated into several sections of related rules. Rationale for each the rules is provided unless it's fairly obvious.
 
-##General
+## Table of Contents
 
-- Deconstruct local namespace. Cases such as:
+- [Classes](#classes)
+- [Route Handlers](#route-handlers)
+- [Controllers](#controllers)
+- [Components](#components)
+- [Models](#models)
+- [Mixins](#mixins)
+- [Naming](#naming)
+- [Misc](#misc)
+
+## Classes
+
+- Use a consistent structure in your class definitions.
 
 ```javascript
-import Ember from ‘ember’;
+// import statements go first
+import Ember from 'ember';
 
+// namespace deconstruction
+const { Component } = Ember;
+
+// default export
 export default Ember.Component.extend({
-  title: Ember.computed(‘foo’, function() {
-    //something
-  })
+  // body omitted
 });
 ```
 
-should be:
+- Deconstruct local namespaces. This pattern also serves as a handy tool for developers to know what you actually used in a file.
 
 ```javascript
-import Ember from ‘ember’;
+import Ember from 'ember';
 
+// bad
+export default Ember.Component.extend();
+
+// good - single namespace
+const { Component } = Ember;
+
+export default Component.extend();
+
+// bad
+export default Ember.Component.extend({
+  foo: Ember.computed('bar', function() {
+    // return something...
+  })
+});
+
+// good - newline multiple namespaces
 const {
   Component,
   computed
 } = Ember;
 
 export default Component.extend({
-  title: computed(‘foo’, function() {
-    //something
+  foo: computed('bar', function() {
+    // return something...
   })
 });
 ```
 
-another one:
+- Deconstruct methods with care.
 
 ```javascript
+// bad
 const {
-Component,
-inject
+  Component,
+  moment: { add }
 } = Ember;
 
-const { service } = inject;
+export default Component.extend({
+  session: service();
+});
+
+// good - Ember Core methods can be safely deconstructed
+const {
+  Component,
+  inject: { service }
+} = Ember;
 
 export default Component.extend({
-session: inject.service();
+  session: service();
 });
 ```
 
-Where there is only one import, don’t newline the const declaration:
+## Route Handlers
 
-```javascript
-const { Component } = Ember;
-
-export default Component.extend();
-```
-
-This pattern also serves as a handy tool for developers to know what you actually used in a file;
-
-- Avoid importing properties from other files. For example, a constant on Model A should not be imported to Model B in most cases;
-
-- Don't use jQuery accessors;
-
-- Animations should leverage hardware accelerated properties. For transitions use Liquid Fire;
-
-- Components don’t need to be wrapped in a div, they are divs by default. Use the classNames and/or tagName property to modify a component before wrapping it;
-
-- Don't over nest your components. Consider if your nesting adds better details or obfuscation for new developers;
-
-- For mobile, remember that heavy DOM nesting negatively impacts
-  performance;
-
-- Within Cordova/Phonegap applications, abstract general Cordova to a service;
-
-- In general, you want to rollbackAttributes on route exit for model edit pages;
-
-- Returning promises is a _good_ thing;
-
- Don’t alias your models as model, or use the auto set ‘model’ property on a controller. Model is not descriptive, and makes you wonder ‘which model?’;
-
-- Action names should be descriptive, and are usually verbNoun;
-
-- Follow the paradigm that components handle their internal state and routes handle application state;
-
-- Where possible, declare a single Application Serializer. When mangling/changes are required, inherit ApplicationSerializer vs the one in use (e.g. javascriptON Serializer);
-
-- Same as above for Adapters.;
-
-- RTFM: guides.emberjavascript.com;
-
-
-##Controllers
-
-Controllers in general should not be used. Most controllers should will like this:
-
-
-```javascript
-import Ember from 'ember';
-
-const { Controller } = Ember;
-
-export default Controller.extend({
-attrs: {}
-});
-```
-
-We don’t do much more here. It is ok to sometimes add some code, for example a small computed property to filter an item. Another exception is obviously queryParams.
-
-Sometimes we still use Controllers in mobile where the saved nesting
-noticeably improves performance.
-
-##Routes
-
-- Instead of setting a model directly on a controller (e.g. controller.modelName), use an attrs hook. This also makes it easy to distinguish items that _are_ on the controller proper.
-
-An example route:
+- Use a consistent structure for route handlers.
 
 ```javascript
 export default Route.extend({
+  // service declarations
+
+  // lifecycle hooks in order of execution
+  model() {},
+  setupController() {},
+
+  // custom functions
+
+  // actions separated by a newline
+});
+```
+
+- Pass models to controllers using descriptive name on an `attrs` hook. This distinguishes items passed to the controller from items on the controller itself and avoids questions of which model is being passed in.
+
+```javascript
+// bad - it is unclear which model the controller has been passed
+export default Route.extend({
   model() {
-    return this.store.find(‘contact’);
+    return this.store.findAll('contact');
+  }
+});
+
+// good
+export default Route.extend({
+  model() {
+    return this.store.findAll('contact');
   },
 
   setupController(controller, model) {
-    controller.set(‘attrs.contact’, model);
+    controller.set('attrs.contacts', model);
+  }
+});
+
+// good - use RSVP.hash for multiple models
+export default Route.extend({
+  model() {
+    return RSVP.hash({
+      followers: this.store.findAll('follower'),
+      following: this.store.findAll('following')
+    })
+  },
+
+  setupController(controller, model) {
+    controller.set('attrs', model);
   }
 });
 ```
 
-And in your templates, you can access attrs.contact. 
+- Handle application state in routes and component state in components.
 
-- For multi model routes, leverage RSVP.hash:
+- Rollback attributes on model edit route exit.
+
+## Controllers
+
+- Use controllers to decorate the model, handling query params, and where reduced component nesting noticeably improves performance on mobile devices.
+
+- Use a consistent structure for controllers.
+
 ```javascript
-export default Route.extend({
-  model() {
-    return RSVP.hash({
-      followers: this.store.find(‘follower’),
-      following: this.store.find(‘following’)
-    }),
-  },
-
-  setupController(controller, model) {
-    controller.set(‘attrs’, model);
-  }   
+export default Controller.extend({
+  // passed properties
+  attrs: {},
+  
+  // computed properties
+  sortedContacts: computed('attrs.contacts.[]', function() {
+    return this.get('attrs.contacts').sortBy('createdAt').reverse();
+  }),
 });
 ```
 
-##Mixins
+## Components
 
-Always newline after Mixin declarations. For example:
+- Use a consistent structure for components.
 
 ```javascript
+export default Component.extend({
+  // service declarations
+
+  // native component properties
+  tagName: 'nav',
+
+  // passed properties
+  attrs: {},
+
+  // custom properties
+  foo: 'foo',
+
+  // lifecycle hooks in order of execution
+  init() {},
+  didReceiveAttrs() {},
+  didInsertElement() {},
+
+  // computed properties
+  fancyFoo: computed('foo', function() {
+    // body omitted
+  }),
+
+  // native functions
+
+  // actions separated by a newline
+  actions: {
+    doFoo() {
+      // body omitted
+    },
+
+    doBar() {
+      // body omitted
+    }
+  }
+});
+```
+
+- Set tag name. Components don’t need to be wrapped in a div as they are by default. Use the `tagName` property to modify a component before wrapping it.
+
+```javascript
+// good
+export default Component.extend({
+  tagName: 'nav'
+});
+```
+
+- Don't over nest your components. Consider if your nesting adds better details or obfuscation for new developers. Heavy DOM nesting negatively impacts performance on mobile devices.
+
+- Align properties in Handlebars.
+
+```hbs
+# good
+{{component-name
+  property='foo'
+  action=(action 'actionName')}}
+```
+
+## Models
+
+- Use a consistent structure for models.
+
+```javascript
+export default Model.extend({
+  // service declarations
+
+  // attributes
+  title: attr('string'),
+  body: attr('string'),
+
+  // relationships
+  comments: hasMany('comment'),
+  author: belongsTo('user'),
+
+  // computed properties
+  fancyTitle: computed('title', function() {
+    // return something
+  });
+
+  // custom functions
+});
+```
+
+- Declare and use an application serializer and inherit from it when changes are required.
+
+- Declare and use an application adapter and inherit from it when changes are required.
+
+- Avoid importing properties from other files. For example, a constant on Model A should not be imported to Model B in most cases;
+
+## Mixins
+
+- Newline after mixin declarations.
+
+```javascript
+// good
 export default Component.extend(
   Mixin, {
 
-  //code here
+  // body omitted
 });
-```
 
-```javascript
+
+// good
 export default Component.extend(
   Mixin1,
   Mixin2 {
 
-  //code here
+  // body omitted
 });
 ```
 
-###Directory Structure:
+- Use a consistent directory structure.
 
 ```
+# good
 /mixins
   /models
   /routes
   /components
 ```
 
-##Components:
+## Naming
 
-###Component Declarations:
-Align component / other hbs style properties as such:
-
-```hbs
-{{component-name
-  property=‘foo’
-  action=(action ‘actionName’)}}
-```
-
-The order of declaration for a component is always properties, and then actions
-
-##Order of Declaration
-
-The highest level  order is:
-
-* 1) Services;
-* 2) Native Properties; and
-* 3) Custom Properties.
-
-Lifecycle hooks (e.g. model, setupController) should be in order of execution.
-
-###Components:
-* 1) Services;
-* 2) Native component properties;
-* 3) Passed / custom properties;
-* 4) Lifecycle hooks;
-* 5) Computed properties;
-* 6) Any native functions; and
-* 7) Actions.
-
-Create a newline after each, and always line separate actions. So for example
+- Name actions descriptively.
 
 ```javascript
-export default Component.extend({
-  tagName: ‘li’,
-  classNames: ‘list-items’,
-
-  title: ‘Passed title’,
-
-  doSomething() {
-  }.on(‘didInsertElement’),
-
-  funkyTitle: computed(‘title’, function() {
-    const title = this.get(‘title’);
-    return `FUNKY ${title}`;
-  },
-
-  actions: {
-    actionOne() {
-    },
-
-    actionTwo() {
-    }
-});
+// good
+launchConfirmDialog
+submitConfirm
+cancelConfirm
 ```
 
-###Routes:
-* 1) Service declarations;
-* 2) Lifecycle hooks;
-* 3) Any custom functions; and
-* 4) Actions
+## Misc
 
+- Don't use jQuery accessors.
 
-###Models:
-* 1) Service declarations
-* 2) attrs;
-* 3) Relationships;
-* 4) Computed Properties; and
-* 5) Custom functions.
+- Leverage hardware accelerated properties for animations. For example, use Liquid Fire for transitions.
 
-```javascript
-export default Model.extend({
-  title: attr(‘string’),
-  subTitle: attr(‘string’),
+- Within Cordova/Phonegap applications, abstract general Cordova to a service.
 
-  comments: hasMany(‘comment’),
-  author: belongsTo(‘user’),
+- Return promises. It's a _good_ thing.
 
-  someProperty: computed(‘title’, function() {
-    //do something
-  });
-});
-```
+## Credits
+
+The Ember Style Guide takes inspiration from the [Ruby Style Guide](https://github.com/bbatsov/ruby-style-guide/) and the [Rails Style Guide](https://github.com/bbatsov/rails-style-guide) while the introduction is credited to those guides.
