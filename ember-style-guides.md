@@ -114,14 +114,14 @@ export default Route.extend({
 // bad - it is unclear which model the controller has been passed
 export default Route.extend({
   model() {
-    return this.store.find('contact');
+    return this.store.findAll('contact');
   }
 });
 
 // good
 export default Route.extend({
   model() {
-    return this.store.find('contact');
+    return this.store.findAll('contact');
   },
 
   setupController(controller, model) {
@@ -133,8 +133,8 @@ export default Route.extend({
 export default Route.extend({
   model() {
     return RSVP.hash({
-      followers: this.store.find('follower'),
-      following: this.store.find('following')
+      followers: this.store.findAll('follower'),
+      following: this.store.findAll('following')
     })
   },
 
