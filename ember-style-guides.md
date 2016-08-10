@@ -125,7 +125,7 @@ export default Route.extend({
   },
 
   setupController(controller, model) {
-    controller.set('attrs.contact', model);
+    controller.set('attrs.contacts', model);
   }
 });
 
