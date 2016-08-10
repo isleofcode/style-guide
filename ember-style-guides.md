@@ -150,14 +150,19 @@ export default Route.extend({
 
 ## Controllers
 
-- Use controllers to decorate model attributes (eg. using a computed property to filter an array), handling query params, and where reduced component nesting noticeably improves performance on mobile devices.
+- Use controllers to decorate the model, handling query params, and where reduced component nesting noticeably improves performance on mobile devices.
 
 - Use a consistent structure for controllers.
 
 ```javascript
 export default Controller.extend({
   // passed properties
-  attrs: {}
+  attrs: {},
+  
+  // computed properties
+  sortedContacts: computed('attrs.contacts.[]', function() {
+    return this.get('attrs.contacts').sortBy('createdAt').reverse();
+  }),
 });
 ```
 
